@@ -7,7 +7,7 @@ const JobPosting = require("../models/jobPosting-model");
 const JobApplication = require("../models/jobApplication");
 const {
   sendVerificationEmail,
-  sendWellcomeEmail,
+  sendWelcomeEmail,
   restPasswordEmail,
   restPasswordSuccessEmail,
 } = require("../nodemailer/email");
@@ -37,7 +37,11 @@ const signup = async (req, res) => {
     const { password: _, ...companyWithoutPassword } = newCompany.toJSON();
 
     generateTokenSetCookie(res, newCompany.companyId);
-    sendVerificationEmail(email, verificationToken);
+    try {
+      await sendVerificationEmail(email, verificationToken);
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+    }
     res.status(201).json({
       message: "Company added successfully",
       data: companyWithoutPassword,
@@ -337,7 +341,7 @@ const verifyEmail = async (req, res) => {
       "Company verified successfully. Sending welcome email.",
       company.companyName
     );
-    sendWellcomeEmail(company.email, company.companyName);
+    sendWelcomeEmail(company.email, company.companyName);
 
     res
       .status(200)
