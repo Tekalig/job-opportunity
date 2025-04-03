@@ -249,7 +249,12 @@ const verifyEmail = async (req, res) => {
       "expert verified successfully. Sending welcome email.",
       expert.firstName + expert.lastName
     );
-    sendWellcomeEmail(expert.email, expert.firstName + expert.lastName);
+     try {
+      sendWelcomeEmail(expert.email, expert.firstName + expert.lastName);
+    } catch (emailError) {
+      console.error("Error sending welcome email:", emailError);
+      return res.status(500).json({ message: "Internal server error", error: emailError });
+     }
 
     res
       .status(200)
