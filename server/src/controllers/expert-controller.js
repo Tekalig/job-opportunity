@@ -10,7 +10,7 @@ const Profile = require("../models/profile-model");
 
 const {
   sendVerificationEmail,
-  sendWellcomeEmail,
+  sendWelcomeEmail,
   restPasswordEmail,
 } = require("../nodemailer/email");
 
@@ -36,7 +36,11 @@ const signup = async (req, res) => {
     const { password: _, ...expertWithoutPassword } = newExpert.toJSON();
     // Generate token and set cookie
     generateTokenSetCookie(res, newExpert.expertId);
-    sendVerificationEmail(email, newExpert.verificationToken);
+    try {
+      await sendVerificationEmail(email, newExpert.verificationToken);
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+    }
     res.status(201).json({
       message: "Expert added successfully",
       data: expertWithoutPassword,
@@ -193,13 +197,11 @@ const checkAuth = async (req, res) => {
     const expert = await Expert.findOne({ where: { expertId } });
     if (expert) {
       const { password, ...expertWithoutPassword } = expert.toJSON();
-      res
-        .status(200)
-        .json({
-          message: "Authenticated",
-          data: expertWithoutPassword,
-          isEmployer: false,
-        });
+      res.status(200).json({
+        message: "Authenticated",
+        data: expertWithoutPassword,
+        isEmployer: false,
+      });
     } else {
       res.status(400).json({ message: "Not authenticated" });
     }
@@ -247,7 +249,12 @@ const verifyEmail = async (req, res) => {
       "expert verified successfully. Sending welcome email.",
       expert.firstName + expert.lastName
     );
-    sendWellcomeEmail(expert.email, expert.firstName + expert.lastName);
+     try {
+      sendWelcomeEmail(expert.email, expert.firstName + expert.lastName);
+    } catch (emailError) {
+      console.error("Error sending welcome email:", emailError);
+      return res.status(500).json({ message: "Internal server error", error: emailError });
+     }
 
     res
       .status(200)
