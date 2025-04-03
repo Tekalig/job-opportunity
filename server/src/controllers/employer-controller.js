@@ -5,7 +5,12 @@ const generateTokenSetCookie = require("../utils/generateTokenSetCookies");
 const Employer = require("../models/employer-model");
 const JobPosting = require("../models/jobPosting-model");
 const JobApplication = require("../models/jobApplication");
-const { sendVerificationEmail } = require("../nodemailer/email");
+const {
+  sendVerificationEmail,
+  sendWellcomeEmail,
+  restPasswordEmail,
+  restPasswordSuccessEmail,
+} = require("../nodemailer/email");
 
 const signup = async (req, res) => {
   try {
@@ -32,7 +37,7 @@ const signup = async (req, res) => {
     const { password: _, ...companyWithoutPassword } = newCompany.toJSON();
 
     generateTokenSetCookie(res, newCompany.companyId);
-    await sendVerificationEmail(email, verificationToken);
+    sendVerificationEmail(email, verificationToken);
     res.status(201).json({
       message: "Company added successfully",
       data: companyWithoutPassword,
@@ -93,10 +98,18 @@ const editProfile = async (req, res) => {
     if (!company) {
       return res.status(404).json({ message: "Company not found" });
     }
-    let updatedFields = { companyName, contactNumber, companyDescription, profilePicture: bufferdProfilePicture };
+    let updatedFields = {
+      companyName,
+      contactNumber,
+      companyDescription,
+      profilePicture: bufferdProfilePicture,
+    };
 
     if (oldPassword && newPassword) {
-      const isPasswordValid = await bycrypt.compare(oldPassword, company.password);
+      const isPasswordValid = await bycrypt.compare(
+        oldPassword,
+        company.password
+      );
       if (!isPasswordValid) {
         return res.status(400).json({ message: "Invalid old password" });
       }
@@ -210,7 +223,7 @@ const deleteJob = async (req, res) => {
   }
 };
 
-const getApplicants = async (req, res) => {
+const getApplicantsByJobId = async (req, res) => {
   try {
     const jobId = Number(req.params.jobId);
     // Fetch all applicants for a specific job posting using Sequelize
@@ -221,6 +234,18 @@ const getApplicants = async (req, res) => {
     res.status(200).json({
       message: "Applicants retrieved successfully",
       applicants,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
+const getApplicants = async (req, res) => {
+  try {
+    const applicants = await JobApplication.findAll();
+    res.status(200).json({
+      message: "Applicants retrieved successfully",
+      applicants: applicants,
     });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error });
@@ -247,10 +272,39 @@ const examineApplicant = async (req, res) => {
   }
 };
 
+const getCompanies = async (req, res) => {
+  try {
+    // Fetch all companies using Sequelize
+    const companies = await Employer.findAll();
+    res.status(200).json({
+      message: "Companies retrieved successfully",
+      companies: companies,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
+const checkAuth = async (req, res) => {
+  try {
+    const companyId = req.userId; // Assuming you have the company ID stored in req.userId after authentication
+    const company = await Employer.findOne({ where: { companyId } });
+    if (!company) {
+      return res.status(400).json({ message: "Not authenticated" });
+    }
+    res
+      .status(200)
+      .json({ message: "Authenticated successfully", user: company });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
 const verifyEmail = async (req, res) => {
   try {
     const { verificationToken } = req.body;
     const companyId = req.userId; // Assuming you have the company ID stored in req.userId after authentication
+
     // Find company by email and verification token using Sequelize
     const company = await Employer.findOne({
       where: {
@@ -265,7 +319,7 @@ const verifyEmail = async (req, res) => {
     }
 
     // Update the company's email verification status using Sequelize
-    const updatedCompany = await Employer.update(
+    const [updatedRows] = await Employer.update(
       {
         isVerified: true,
         verificationToken: null,
@@ -274,13 +328,22 @@ const verifyEmail = async (req, res) => {
       { where: { companyId } }
     );
 
-    if (updatedCompany[0] === 0) {
+    if (updatedRows === 0) {
+      console.log("No rows updated for companyId:", companyId);
       return res.status(400).json({ message: "Email not verified" });
     }
 
-    await sendWellcomeEmail(company.email, company.companyName);
-    res.status(200).json({ message: "Email verified successfully" });
+    console.log(
+      "Company verified successfully. Sending welcome email.",
+      company.companyName
+    );
+    sendWellcomeEmail(company.email, company.companyName);
+
+    res
+      .status(200)
+      .json({ message: "Email verified successfully", isEmployer: true });
   } catch (error) {
+    console.error("Verification error:", error);
     res.status(500).json({ message: "Internal server error", error });
   }
 };
@@ -358,8 +421,11 @@ module.exports = {
   postJob,
   editJob,
   deleteJob,
+  getApplicantsByJobId,
   getApplicants,
   examineApplicant,
+  getCompanies,
+  checkAuth,
   verifyEmail,
   forgotPassword,
   resetPassword,

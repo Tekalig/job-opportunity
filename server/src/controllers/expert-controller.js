@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
+const { Op } = require("sequelize");
 const generateTokenSetCookie = require("../utils/generateTokenSetCookies");
 const JobPosting = require("../models/jobPosting-model");
 const JobApplication = require("../models/jobApplication");
@@ -34,8 +35,8 @@ const signup = async (req, res) => {
     // Exclude password from the returned company object
     const { password: _, ...expertWithoutPassword } = newExpert.toJSON();
     // Generate token and set cookie
-    generateTokenSetCookie(res, newExpert.id);
-    await sendVerificationEmail(email, newExpert.verificationToken);
+    generateTokenSetCookie(res, newExpert.expertId);
+    sendVerificationEmail(email, newExpert.verificationToken);
     res.status(201).json({
       message: "Expert added successfully",
       data: expertWithoutPassword,
@@ -86,7 +87,12 @@ const editProfile = async (req, res) => {
       return res.status(404).json({ message: "Expert not found" });
     }
 
-    let updateData = { firstName, lastName, contactNumber, profilePicture: bufferdProfilePicture };
+    let updateData = {
+      firstName,
+      lastName,
+      contactNumber,
+      profilePicture: bufferdProfilePicture,
+    };
 
     if (oldPassword && newPassword) {
       const isMatch = await bcrypt.compare(oldPassword, expert.password);
@@ -170,12 +176,46 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+const getExperts = async (req, res) => {
+  try {
+    const experts = await Expert.findAll();
+    res
+      .status(200)
+      .json({ message: "Experts fetched successfully", experts: experts });
+  } catch (error) {
+    res.status(400).json({ message: "Experts not fetched", error });
+  }
+};
+
+const checkAuth = async (req, res) => {
+  try {
+    const expertId = req.userId;
+    const expert = await Expert.findOne({ where: { expertId } });
+    if (expert) {
+      const { password, ...expertWithoutPassword } = expert.toJSON();
+      res
+        .status(200)
+        .json({
+          message: "Authenticated",
+          data: expertWithoutPassword,
+          isEmployer: false,
+        });
+    } else {
+      res.status(400).json({ message: "Not authenticated" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
 const verifyEmail = async (req, res) => {
   try {
     const { verificationToken } = req.body;
-    const expertId = req.userId;
+    const expertId = req.userId; // Assuming you have the company ID stored in req.userId after authentication
 
-    //
+    console.log("expertId:", expertId, "verificationToken:", verificationToken);
+
+    // Find company by email and verification token using Sequelize
     const expert = await Expert.findOne({
       where: {
         expertId,
@@ -183,24 +223,37 @@ const verifyEmail = async (req, res) => {
         verificationExpiresAt: { [Op.gt]: new Date() },
       },
     });
-    console.log(verificationToken, expertId);
 
-    if (expert) {
-      //
-      await Expert.update(
-        {
-          isVerified: true,
-          verificationToken: null,
-          verificationExpiresAt: null,
-        },
-        { where: { companyId } }
-      );
-      await sendWellcomeEmail(expert.email, expert.firstName + expert.lastName);
-      res.status(200).json({ message: "Email verified successfully" });
-    } else {
-      res.status(400).json({ message: "Email not verified" });
+    if (!expert) {
+      return res.status(400).json({ message: "Invalid verification token" });
     }
+
+    // Update the expert's email verification status using Sequelize
+    const [updatedRows] = await Expert.update(
+      {
+        isVerified: true,
+        verificationToken: null,
+        verificationExpiresAt: null,
+      },
+      { where: { expertId } }
+    );
+
+    if (updatedRows === 0) {
+      console.log("No rows updated for expertId:", expertId);
+      return res.status(400).json({ message: "Email not verified" });
+    }
+
+    console.log(
+      "expert verified successfully. Sending welcome email.",
+      expert.firstName + expert.lastName
+    );
+    sendWellcomeEmail(expert.email, expert.firstName + expert.lastName);
+
+    res
+      .status(200)
+      .json({ message: "Email verified successfully", isEmployer: false });
   } catch (error) {
+    console.error("Verification error:", error);
     res.status(500).json({ message: "Internal server error", error });
   }
 };
@@ -240,6 +293,8 @@ module.exports = {
   editProfile,
   getJobs,
   applyJob,
+  getExperts,
+  checkAuth,
   verifyEmail,
   forgotPassword,
   resetPassword,
