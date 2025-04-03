@@ -10,7 +10,7 @@ const Profile = require("../models/profile-model");
 
 const {
   sendVerificationEmail,
-  sendWellcomeEmail,
+  sendWelcomeEmail,
   restPasswordEmail,
 } = require("../nodemailer/email");
 
@@ -36,7 +36,11 @@ const signup = async (req, res) => {
     const { password: _, ...expertWithoutPassword } = newExpert.toJSON();
     // Generate token and set cookie
     generateTokenSetCookie(res, newExpert.expertId);
-    sendVerificationEmail(email, newExpert.verificationToken);
+    try {
+      await sendVerificationEmail(email, newExpert.verificationToken);
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+    }
     res.status(201).json({
       message: "Expert added successfully",
       data: expertWithoutPassword,
@@ -193,13 +197,11 @@ const checkAuth = async (req, res) => {
     const expert = await Expert.findOne({ where: { expertId } });
     if (expert) {
       const { password, ...expertWithoutPassword } = expert.toJSON();
-      res
-        .status(200)
-        .json({
-          message: "Authenticated",
-          data: expertWithoutPassword,
-          isEmployer: false,
-        });
+      res.status(200).json({
+        message: "Authenticated",
+        data: expertWithoutPassword,
+        isEmployer: false,
+      });
     } else {
       res.status(400).json({ message: "Not authenticated" });
     }
