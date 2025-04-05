@@ -27,13 +27,13 @@ const sendVerificationEmail = async (email, virficationToken) => {
   }
 };
 
-const sendWellcomeEmail = async (email, userName) => {
+const sendWelcomeEmail = async (email, userName) => {
   try {
     const mailOptions = {
       from: sender,
       to: email,
       subject: "Welcome to As company",
-      html: WELLCOME_EMAIL_TEMPLATE.replace("{userName}", userName),
+      html: WELCOME_EMAIL_TEMPLATE.replace("{{userName}}", userName),
     };
     const response = await mailClient(mailOptions);
     console.log("Email sent seccussfully", response);
@@ -78,7 +78,7 @@ const restPasswordSuccessEmail = async (email) => {
 
 module.exports = {
   sendVerificationEmail,
-  sendWellcomeEmail,
+  sendWelcomeEmail,
   restPasswordEmail,
   restPasswordSuccessEmail,
 };
