@@ -33,7 +33,7 @@ const sendWelcomeEmail = async (email, userName) => {
       from: sender,
       to: email,
       subject: "Welcome to As company",
-      html: WELLCOME_EMAIL_TEMPLATE.replace("{{userName}}", userName),
+      html: WELCOME_EMAIL_TEMPLATE.replace("{{userName}}", userName),
     };
     const response = await mailClient(mailOptions);
     console.log("Email sent seccussfully", response);
