@@ -6,6 +6,8 @@ const {
   getJobs,
   editProfile,
   applyJob,
+  getExperts,
+  checkAuth,
   verifyEmail,
   forgotPassword,
   resetPassword,
@@ -22,6 +24,10 @@ expertRouter.patch("/editProfile",upload.single("picture"), editProfile);
 expertRouter.get("/getJobs", getJobs);
 
 expertRouter.post("/applyJob", upload.single("resume"), applyJob);
+
+expertRouter.get("/experts", getExperts);
+
+expertRouter.get("/checkAuth", checkAuth);
 
 expertRouter.patch("/verify", verifyEmail);
 
