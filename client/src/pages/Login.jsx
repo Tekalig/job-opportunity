@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import { Loader, Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Input from "../components/Input";
-import AuthStore from "../store/AuthStore";
+import Input from "../components/ui/Input";
+import AuthStore from "../actions";
 
 function Login() {
   const [email, setEmail] = useState("");

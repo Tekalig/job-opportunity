@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import AuthStore from "../store/AuthStore";
+import AuthStore from "../actions";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const PostJob = () => {

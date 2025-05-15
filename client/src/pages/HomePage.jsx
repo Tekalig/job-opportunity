@@ -1,4 +1,4 @@
-import AuthStore from "../store/AuthStore";
+import AuthStore from "../actions";
 import expertImage from "../assets/images/expert.webp";
 import expertImage1 from "../assets/images/expert1.jpg";
 import expertImage2 from "../assets/images/expert2.jpg";
@@ -6,7 +6,7 @@ import expertImage2 from "../assets/images/expert2.jpg";
 const ExpertHomePage = () => {
   const { isEmployer } = AuthStore();
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
+    <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-800">
       <main className="flex-grow flex flex-col items-center justify-center p-8">
         {!isEmployer ? (
           <>

@@ -1,12 +1,10 @@
-import { Search, CircleX, MapPin, Building, Plus } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import AuthStore from "../store/AuthStore";
+import AuthStore from "../actions";
 function SearchJob() {
   const [searchParams, setSearchParams] = useState({
-    jobTitle: "",
-    companyName: "",
-    location: "",
+    query: "",
     type: "All",
     level: "All",
   });
@@ -25,47 +23,22 @@ function SearchJob() {
     e.preventDefault();
   };
   return (
-    <div className="grid gap-10 rounded-xl bg-gray-500 py-4 text-white px-2">
+    <div className="grid gap-6 rounded-xl dark:bg-gray-800 py-6 text-gray-200 px-4 shadow-lg">
       <form action="">
-        <div className="flex justify-between items-center gap-3 bg-gray-400 text-black shadow-lg p-5 rounded-lg shadow-gray-600">
-          <div className="flex gap-2 items-center">
-            <Search className="cursor-pointer text-[25px]" />
+        <div className="flex justify-between items-center gap-3 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 shadow-md p-4 rounded-md">
+          <div className="flex gap-2 items-center w-full">
+            <Search className="cursor-pointer text-[25px] text-gray-700 dark:text-gray-200" />
             <input
               type="text"
-              name="jobTitle"
-              value={searchParams.jobTitle}
+              name="query"
+              value={searchParams.query}
               onChange={onChange}
-              className="bg-transparent w-full focus:outline-none"
-              placeholder="Search Job title here..."
+              className="bg-transparent w-full focus:outline-none text-gray-800 dark:text-gray-200 placeholder-gray-500"
+              placeholder="Search here..."
             />
-            <CircleX className="text-[30px] hover:text-gray-800 cursor-pointer" />
-          </div>
-          <div className="flex gap-2 items-center">
-            <Building className="cursor-pointer text-[25px]" />
-            <input
-              type="text"
-              name="companyName"
-              value={searchParams.companyName}
-              onChange={onChange}
-              className="bg-transparent w-full focus:outline-none"
-              placeholder="Search by Company..."
-            />
-            <CircleX className="text-[30px] hover:text-gray-800 cursor-pointer" />
-          </div>
-          <div className="flex gap-2 items-center">
-            <MapPin className="cursor-pointer text-[25px]" />
-            <input
-              type="text"
-              name="location"
-              value={searchParams.location}
-              onChange={onChange}
-              className="bg-transparent w-full focus:outline-none"
-              placeholder="Search by Location..."
-            />
-            <CircleX className="text-[30px] hover:text-gray-800 cursor-pointer" />
           </div>
           <button
-            className="px-10 rounded-xl bg-amber-600 h-full p-2 text-white"
+            className="px-8 rounded-lg bg-blue-600 hover:bg-blue-500 transition-colors h-full py-2 text-white font-semibold"
             onClick={handleSubmit}
           >
             Search
@@ -73,9 +46,9 @@ function SearchJob() {
         </div>
       </form>
 
-      <div className="flex gap-10 justify-center items-center text-black">
+      <div className="flex gap-8 justify-center items-center text-gray-800 dark:text-gray-200">
         <div className="flex gap-2 items-center">
-          <label className="text-semibold" htmlFor="type">
+          <label className="font-medium" htmlFor="type">
             Type:
           </label>
           <select
@@ -83,7 +56,7 @@ function SearchJob() {
             id="type"
             value={searchParams.type}
             onChange={onChange}
-            className="bg-gray-100 px-4 py-1 rounded-md"
+            className="dark:bg-gray-700 dark:text-gray-200 px-4 py-2 rounded-md focus:ring-2 focus:ring-blue-500"
           >
             <option>All</option>
             <option>internship</option>
@@ -93,7 +66,7 @@ function SearchJob() {
           </select>
         </div>
         <div className="flex gap-2 items-center">
-          <label className="text-semibold" htmlFor="level">
+          <label className="font-medium" htmlFor="level">
             Level:
           </label>
           <select
@@ -101,7 +74,7 @@ function SearchJob() {
             value={searchParams.level}
             onChange={onChange}
             id="level"
-            className="bg-gray-100 px-4 py-1 rounded-md"
+            className="dark:bg-gray-700 dark:text-gray-200 px-4 py-2 rounded-md focus:ring-2 focus:ring-blue-500"
           >
             <option>All</option>
             <option>Entry</option>
@@ -111,11 +84,11 @@ function SearchJob() {
         </div>
       </div>
       {isEmployer && (
-        <Link className="flex justify-center mt-5" to={"/postJob"}>
-          <span className="text-md font-bold p-2 underline">
+        <Link className="flex justify-center mt-6" to={"/postJob"}>
+          <span className="text-md font-bold p-2 underline text-blue-400 hover:text-blue-300">
             Post a New Job
           </span>
-          <button className="p-2 mx-4 rounded-xl bg-green-600 text-black hover:bg-green-300">
+          <button className="p-2 mx-4 rounded-lg bg-green-600 text-gray-200 hover:bg-green-500 transition-colors">
             <Plus />
           </button>
         </Link>

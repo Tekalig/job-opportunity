@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Buffer } from "buffer";
-import AuthStore from "../../store/AuthStore";
+import AuthStore from "../../actions";
 import { ImageUp } from "lucide-react";
 
 
