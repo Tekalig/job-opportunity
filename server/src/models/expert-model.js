@@ -1,61 +1,61 @@
-const Sequelize = require("sequelize");
+const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
 const Expert = sequelize.define(
   "Experts",
   {
     expertId: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
       allowNull: false,
     },
     firstName: {
-      type: Sequelize.STRING(50),
+      type: DataTypes.STRING(50),
       allowNull: false,
     },
     lastName: {
-      type: Sequelize.STRING(50),
+      type: DataTypes.STRING(50),
       allowNull: false,
     },
     email: {
-      type: Sequelize.STRING(100),
+      type: DataTypes.STRING(100),
       allowNull: false,
       unique: true,
     },
     contactNumber: {
-      type: Sequelize.STRING(15),
+      type: DataTypes.STRING(15),
       allowNull: false,
       unique: true,
     },
     password: {
-      type: Sequelize.STRING(255),
+      type: DataTypes.STRING(255),
       allowNull: false,
     },
     profilePicture: {
-    type: Sequelize.BLOB("long"), 
-    allowNull: true,
-  },
+      type: DataTypes.BLOB("long"),
+      allowNull: true,
+    },
 
     loginTime: {
-      type: Sequelize.DATE,
-      defaultValue: Sequelize.NOW,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
     },
     isVerified: {
-      type: Sequelize.BOOLEAN,
+      type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
     resetPasswordToken: {
-      type: Sequelize.STRING(255),
+      type: DataTypes.STRING(255),
     },
     resetPasswordExpiresAt: {
-      type: Sequelize.DATE,
+      type: DataTypes.DATE,
     },
     verificationToken: {
-      type: Sequelize.STRING(255),
+      type: DataTypes.STRING(255),
     },
     verificationExpiresAt: {
-      type: Sequelize.DATE,
+      type: DataTypes.DATE,
     },
   },
   {
