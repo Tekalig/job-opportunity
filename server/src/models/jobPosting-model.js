@@ -1,48 +1,48 @@
-const Sequelize = require("sequelize");
+const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 const Employer = require("./employer-model");
 
 const JobPosting = sequelize.define("JobPosting", {
   jobId: {
-    type: Sequelize.INTEGER,
+    type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
   jobTitle: {
-    type: Sequelize.STRING(100),
+    type: DataTypes.STRING(100),
     allowNull: false,
   },
   jobDescription: {
-    type: Sequelize.TEXT,
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   jobType: {
-    type: Sequelize.ENUM("fulltime", "parttime", "contract", "internship"),
+    type: DataTypes.ENUM("fulltime", "parttime", "contract", "internship"),
     allowNull: false,
   },
   jobLocation: {
-    type: Sequelize.STRING(100),
+    type: DataTypes.STRING(100),
     allowNull: false,
   },
   jobSalary: {
-    type: Sequelize.STRING(50),
+    type: DataTypes.STRING(50),
     allowNull: false,
   },
   jobExperience: {
-    type: Sequelize.STRING(100),
+    type: DataTypes.STRING(100),
     allowNull: false,
   },
   jobSkills: {
-    type: Sequelize.TEXT,
+    type: DataTypes.TEXT,
     allowNull: false,
   },
 
   jobLevel: {
-    type: Sequelize.ENUM("entry", "intermediate", "senior"),
+    type: DataTypes.ENUM("entry", "intermediate", "senior"),
     allowNull: false,
   },
   companyId: {
-    type: Sequelize.INTEGER,
+    type: DataTypes.INTEGER,
     allowNull: false,
     references: {
       model: Employer,
