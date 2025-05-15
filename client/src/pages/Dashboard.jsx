@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import JobCard from "../components/jobs";
 import SearchJob from "../components/Search";
-import AuthStore from "../store/AuthStore";
+import AuthStore from "../actions";
 
 const Dashboard = () => {
   const { jobs, getJobs } = AuthStore();

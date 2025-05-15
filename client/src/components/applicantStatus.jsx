@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import AuthStore from "../store/AuthStore";
+import AuthStore from "../actions";
 import { Buffer } from "buffer";
 
 const JobDetails = () => {
   const [selectedCategory, setSelectedCategory] = useState("shortlisted");
   const [status, setStatus] = useState("");
   const { jobId } = useParams();
-  const { getApplicants, applicants, examineApplicant } = AuthStore();
+  const { getApplicant, applicants, examineApplicant } = AuthStore();
 
   useEffect(() => {
-    getApplicants(jobId);
+    getApplicant(jobId);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);

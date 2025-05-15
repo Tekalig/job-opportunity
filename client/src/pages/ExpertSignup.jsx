@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import { Loader, Lock, Mail, PhoneCall, UserRoundPen } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Input from "../components/Input";
-import AuthStore from "../store/AuthStore";
+import Input from "../components/ui/Input";
+import AuthStore from "../actions";
 
 function ExpertSignUp() {
   const [formData, setFormData] = useState({
@@ -27,7 +27,7 @@ function ExpertSignUp() {
     e.preventDefault();
     try {
       await signup(formData, "/expert/signup");
-      navigate("/expert/verify-email");
+      navigate("/verify");
     } catch (error) {
       console.log(error);
     }

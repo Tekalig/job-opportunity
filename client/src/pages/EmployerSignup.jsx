@@ -9,8 +9,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Input from "../components/Input";
-import AuthStore from "../store/AuthStore";
+import Input from "../components/ui/Input";
+import AuthStore from "../actions";
 
 function EmployerSignUp() {
   const [formData, setFormData] = useState({
@@ -34,7 +34,7 @@ function EmployerSignUp() {
     e.preventDefault();
     try {
       await signup(formData, "/employer/signup");
-      navigate("/employer/verify-email");
+      navigate("/verify");
     } catch (error) {
       console.log(error);
     }

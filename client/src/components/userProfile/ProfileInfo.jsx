@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Buffer } from "buffer";
-import AuthStore from "../../store/AuthStore";
+import AuthStore from "../../actions";
 
 export default function ProfileInfo() {
   const { user, isEmployer, logout } = AuthStore();

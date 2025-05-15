@@ -1,4 +1,4 @@
-import AuthStore from "../../store/AuthStore";
+import AuthStore from "../../actions";
 import EmployerProile from "./editEmployerProile";
 import ExpertProfile from "./editExpertProfile";
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Buffer } from "buffer";
 import { ImageUp } from "lucide-react";
-import AuthStore from "../../store/AuthStore";
+import AuthStore from "../../actions";
 
 export default function EditEmployerProile() {
   const [subProfile, setSubProfile] = useState({

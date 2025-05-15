@@ -70,16 +70,16 @@ const sectors = [
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-800">
       <div className="text-center py-12">
         <h1 className="text-4xl font-bold mb-4 text-gray-800">
           All Ethiopian Jobs in One Place.
         </h1>
-        <p className="text-xl text-gray-600">Find career opportunities in Ethiopia</p>
+        <p className="text-xl">Find career opportunities in Ethiopia</p>
       </div>
 
-      <div className="flex flex-col items-center my-12 rounded w-1/2 shadow-md mx-auto bg-slate-200">
-        <p className="text-lg font-semibold my-6 text-gray-700">Sign Up As</p>
+      <div className="flex flex-col items-center my-12 rounded w-1/2 shadow-md mx-auto bg-slate-200 dark:bg-gray-700">
+        <p className="text-lg font-semibold my-6">Sign Up As</p>
 
         <div className="flex space-x-4">
           <Link
@@ -133,8 +133,8 @@ const LandingPage = () => {
 
       <div className="py-12">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4 text-gray-800">Career Sectors</h2>
-          <p className="text-lg mb-8 text-gray-600">
+          <h2 className="text-3xl font-bold mb-4">Career Sectors</h2>
+          <p className="text-lg mb-8">
             Based on the local labor market trend in Ethiopia we categorize our
             vacancies into fourteen sectors
           </p>
@@ -143,13 +143,13 @@ const LandingPage = () => {
             {sectors.map((sector, index) => (
               <div
                 key={index}
-                className="p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-white"
+                className="p-6 text-gray-800 dark:text-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-white dark:bg-gray-700"
               >
                 <div className="h-16 w-16 mx-auto mb-4 text-teal-500">
                   {sector.icon}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800">{sector.name}</h3>
-                <p className="text-gray-600">{sector.positions} Open positions</p>
+                <h3 className="text-xl font-semibold">{sector.name}</h3>
+                <p className="text-gray-600 dark:text-gray-200">{sector.positions} Open positions</p>
               </div>
             ))}
           </div>
