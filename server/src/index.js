@@ -5,7 +5,7 @@ const cookieParser = require("cookie-parser");
 const apiRouter = require("./routes/routes");
 const sequelize = require("./config/db");
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8000;
 
 dotenv.config();
 const app = express();
